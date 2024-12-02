@@ -30,9 +30,14 @@ local function bringAllSnowToFeet(snowParts)
                     end
                     -- Move the snow part to the player's feet
                     snowPart.CFrame = rootPart.CFrame * CFrame.new(0, -rootPart.Size.Y / 2 - snowPart.Size.Y / 2, 0)
+                    print("Moving snow part:", snowPart.Name) -- Debugging log
                 end
             end
+        else
+            print("HumanoidRootPart not found!") -- Debugging log
         end
+    else
+        print("Character not found!") -- Debugging log
     end
 end
 
@@ -42,6 +47,7 @@ local function restoreSnowPositions(snowParts)
         if originalPositions[snowPart] then
             -- Move the snow part back to its original position
             snowPart.CFrame = CFrame.new(originalPositions[snowPart])
+            print("Restoring snow part:", snowPart.Name) -- Debugging log
         end
     end
 end
@@ -52,11 +58,13 @@ local teleportCount = 0
 -- Loop to teleport snow parts repeatedly with a delay
 while teleportCount < 10 do
     local snowParts = getSnowParts() -- Refresh the list of Snow1 parts
+    print("Found " .. #snowParts .. " snow parts.") -- Debugging log
     if #snowParts > 0 then
         bringAllSnowToFeet(snowParts)
         teleportCount = teleportCount + 1 -- Increment the counter each time snow is moved
+        print("Teleport count: " .. teleportCount) -- Debugging log
     else
-        warn("No parts named 'Snow1' found in the workspace!")
+        warn("No parts named 'Snow1' found in the workspace!") -- Debugging log
     end
     task.wait(2) -- Wait for 2 seconds before repeating
 end
@@ -64,3 +72,4 @@ end
 -- After 10 times, restore the snow parts to their original positions
 local snowParts = getSnowParts()
 restoreSnowPositions(snowParts)
+print("Restoring snow parts to original positions.") -- Debugging log
