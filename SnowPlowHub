@@ -1,0 +1,341 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Snowplow Simulator",
+   Icon = 0,
+   LoadingTitle = "Enjoy!",
+   LoadingSubtitle = "by PoppinTums",
+   Theme = "Amethyst",
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "config"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = true,
+   KeySettings = {
+      Title = "PoppinTums",
+      Subtitle = "PoppinTums",
+      Note = "in discord",
+      FileName = "Key",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"Hello"}
+   }
+})
+
+local SnowPlowTab = Window:CreateTab("Bring Snow", 4483362458)
+local MiscTab = Window:CreateTab("Misc", 4483362458)
+local TeleTab = Window:CreateTab("Teleport", 4483362458)
+local EggTab = Window:CreateTab("Egg TPs", 4483362458)
+local CredsTab = Window:CreateTab("Credits", 4483362458)
+
+
+local function teleportPlayer(targetPosition)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        character.HumanoidRootPart.CFrame = CFrame.new(targetPosition)
+    end
+end
+
+local EggTP1 = EggTab:CreateButton({
+    Name = "Teleport To RainbowPets!",
+    Callback = function()
+        teleportPlayer(Vector3.new(7.43, 5.05, -3070.08))
+    end,
+})
+
+local EggTP2 = EggTab:CreateButton({
+    Name = "Teleport To Egg 1 COST 250",
+    Callback = function()
+        teleportPlayer(Vector3.new(40.34, 4.50, -56.58))
+    end,
+})
+
+local EggTP3 = EggTab:CreateButton({
+    Name = "Teleport To Egg 2 COST 1K",
+    Callback = function()
+        teleportPlayer(Vector3.new(31.81, 4.60, -46.41))
+    end,
+})
+
+local EggTP4 = EggTab:CreateButton({
+    Name = "Teleport To Egg 3 COST 5K",
+    Callback = function()
+        teleportPlayer(Vector3.new(20.18, 4.50, -37.86))
+    end,
+})
+
+local EggTP5 = EggTab:CreateButton({
+    Name = "Teleport To Egg 4 COST 15K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-8.12, 4.50, -39.08))
+    end,
+})
+
+local EggTP6 = EggTab:CreateButton({
+    Name = "Teleport To Egg 5 COST 40K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-18.32, 4.50, -47.30))
+    end,
+})
+
+local EggTP7 = EggTab:CreateButton({
+    Name = "Teleport To Egg 6 COST 90K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-26.38, 4.50, -57.78))
+    end,
+})
+
+local EggTP8 = EggTab:CreateButton({
+    Name = "Teleport To Egg 7 COST 175K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-82.43, 20.85, -1144.87))
+    end,
+})
+
+local EggTP9 = EggTab:CreateButton({
+    Name = "Teleport To Egg 8 COST 350K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-84.20, 20.85, -1162.15))
+    end,
+})
+
+local EggTP10 = EggTab:CreateButton({
+    Name = "Teleport To Egg 9 COST 750K",
+    Callback = function()
+        teleportPlayer(Vector3.new(-82.68, 20.85, -1179.02))
+    end,
+})
+
+local EggTP11 = EggTab:CreateButton({
+    Name = "Teleport To Egg 10 COST 1.5M",
+    Callback = function()
+        teleportPlayer(Vector3.new(98.06, 20.96, -1179.04))
+    end,
+})
+
+local EggTP12 = EggTab:CreateButton({
+    Name = "Teleport To Egg 11 COST 3m",
+    Callback = function()
+        teleportPlayer(Vector3.new(98.63, 20.85, -1161.55))
+    end,
+})
+
+local EggTP13 = EggTab:CreateButton({
+    Name = "Teleport To Egg 12 COST 6.3M",
+    Callback = function()
+        teleportPlayer(Vector3.new(99.06, 21.00, -1145.15))
+    end,
+})
+
+local EggTP14 = EggTab:CreateButton({
+    Name = "Teleport To Egg 13 COST 12.5M",
+    Callback = function()
+        teleportPlayer(Vector3.new(34.24, 5.42, -3073.22))
+    end,
+})
+
+local EggTP15 = EggTab:CreateButton({
+    Name = "Teleport To Egg 14 COST 25M",
+    Callback = function()
+        teleportPlayer(Vector3.new(40, 6, -3057))
+    end,
+})
+
+local EggTP16 = EggTab:CreateButton({
+    Name = "Teleport To Egg 15 COST 50M",
+    Callback = function()
+        teleportPlayer(Vector3.new(-27, 6, -3056))
+    end,
+})
+
+local EggTP17 = EggTab:CreateButton({
+    Name = "Teleport To Egg 16 COST 100M",
+    Callback = function()
+        teleportPlayer(Vector3.new(-17, 5, -3072))
+    end,
+})
+
+local EggTP18 = EggTab:CreateButton({
+    Name = "Teleport To Egg 17 COST 500M",
+    Callback = function()
+        teleportPlayer(Vector3.new(12, 5, -4600))
+    end,
+})
+
+local TeleSnow1 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 1",
+    Callback = function()
+        teleportPlayer(Vector3.new(7, 4, -164))
+    end,
+})
+
+local TeleSnow2 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 2",
+    Callback = function()
+        teleportPlayer(Vector3.new(8, 4, -886))
+    end,
+})
+
+
+local TeleSnow3 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 3",
+    Callback = function()
+        teleportPlayer(Vector3.new(6, 22, -1228))
+    end,
+})
+
+
+local TeleSnow4 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 4",
+    Callback = function()
+        teleportPlayer(Vector3.new(8, 4, -1730))
+    end,
+})
+
+
+local TeleSnow5 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 5",
+    Callback = function()
+        teleportPlayer(Vector3.new(5.86, 4, -2785))
+    end,
+})
+
+
+local TeleSnow6 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 6",
+    Callback = function()
+        teleportPlayer(Vector3.new(7, 6, -3051))
+    end,
+})
+
+
+local TeleSnow7 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 7",
+    Callback = function()
+        teleportPlayer(Vector3.new(4.35, 5, -4235))
+    end,
+})
+
+local TeleSnow8 = TeleTab:CreateButton({
+    Name = "Teleport To Snow 8",
+    Callback = function()
+        teleportPlayer(Vector3.new(6.47, 5, -4586))
+    end,
+})
+local TeleDaily = TeleTab:CreateButton({
+    Name = "Daily Reward",
+    Callback = function()
+        teleportPlayer(Vector3.new(47.29, 4.82, -89.65))
+    end,
+})
+
+local CreditsName = CredsTab:CreateButton({
+    Name = "Poppintums/Whosvon",
+    Callback = function()
+        print("Poppintums/Whosvon")
+    end,
+})
+
+local CreditsDiscord = CredsTab:CreateButton({
+    Name = "Discord - Click To Copy",
+    Callback = function()
+        setclipboard("https://discord.gg/3vE3JTpbdX")
+    end,
+})
+
+local Speed25 = MiscTab:CreateButton({
+    Name = "Change Speed - 25",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 25
+    end,
+})
+
+local Speed50 = MiscTab:CreateButton({
+    Name = "Change Speed - 50",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 50
+    end,
+})
+
+local SpeedReset = MiscTab:CreateButton({
+    Name = "Reset/Change Speed - 18",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 18
+    end,
+})
+
+local BringGems = SnowPlowTab:CreateButton({
+   Name = "Collect Gems",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowGems"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 1",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow1"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 2",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow2"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 3",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow3"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 4",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow4"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 5",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow5"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 6",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow6"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 7",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow7"))()
+   end,
+})
+local Button = SnowPlowTab:CreateButton({
+   Name = "Bring Snow 8",
+   Callback = function()
+   loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/SnowPlowBringSnow8"))()
+   end,
+})
