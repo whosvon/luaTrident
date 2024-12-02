@@ -2,12 +2,21 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
+-- Table to store original positions of Snow1 parts
+local originalPositions = {}
+local isSnowBeingBrought = false
+local snowLoop
+
 -- Function to find all parts named "Snow1" in the workspace
 local function getSnowParts()
     local parts = {}
     for _, part in ipairs(workspace:GetDescendants()) do
         if part:IsA("BasePart") and part.Name == "Snow1" then
             table.insert(parts, part)
+            -- Store original positions if not already stored
+            if not originalPositions[part] then
+                originalPositions[part] = part.CFrame
+            end
         end
     end
     return parts
@@ -19,7 +28,6 @@ local function bringAllSnowToFeet(snowParts)
         local rootPart = character:FindFirstChild("HumanoidRootPart")
         if rootPart then
             for _, snowPart in ipairs(snowParts) do
-                -- Ensure the part still exists before teleporting
                 if snowPart and snowPart:IsDescendantOf(workspace) then
                     snowPart.CFrame = rootPart.CFrame * CFrame.new(0, -rootPart.Size.Y / 2 - snowPart.Size.Y / 2, 0)
                 end
@@ -28,13 +36,35 @@ local function bringAllSnowToFeet(snowParts)
     end
 end
 
--- Loop to teleport snow parts repeatedly with a delay
-while true do
-    local snowParts = getSnowParts() -- Refresh the list of Snow1 parts
-    if #snowParts > 0 then
-        bringAllSnowToFeet(snowParts)
-    else
-        warn("No parts named 'Snow1' found in the workspace!")
+-- Function to reset Snow1 parts to their original positions
+local function resetSnowParts()
+    for snowPart, originalCFrame in pairs(originalPositions) do
+        if snowPart and snowPart:IsDescendantOf(workspace) then
+            snowPart.CFrame = originalCFrame
+        end
     end
-    task.wait(2) -- Wait for 2 seconds before repeating
+end
+
+-- Start or stop the snow loop based on the toggle value
+local function toggleSnowBehavior(isEnabled)
+    if isEnabled then
+        -- Start bringing snow to the player's feet
+        isSnowBeingBrought = true
+        snowLoop = coroutine.create(function()
+            while isSnowBeingBrought do
+                local snowParts = getSnowParts()
+                if #snowParts > 0 then
+                    bringAllSnowToFeet(snowParts)
+                else
+                    warn("No parts named 'Snow1' found in the workspace!")
+                end
+                task.wait(2)
+            end
+        end)
+        coroutine.resume(snowLoop)
+    else
+        -- Stop the loop and reset snow
+        isSnowBeingBrought = false
+        resetSnowParts()
+    end
 end
