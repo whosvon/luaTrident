@@ -1,0 +1,23 @@
+local UserInputService = game:GetService("UserInputService")
+
+-- Function to copy the player's coordinates in the desired format to clipboard
+local function copyCoordinates()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character then
+        local position = character.HumanoidRootPart.Position
+        local x, y, z = position.X, position.Y, position.Z
+        local coordString = string.format('teleportPlayer(Vector3.new(%.2f, %.2f, %.2f))', x, y, z)
+        
+        -- Set the coordinates to clipboard
+        setclipboard(coordString)
+        print("Coordinates copied to clipboard: " .. coordString)
+    end
+end
+
+-- Detect when the "P" key is pressed
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.P then
+        copyCoordinates()
+    end
+end)
