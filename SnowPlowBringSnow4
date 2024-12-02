@@ -2,7 +2,10 @@
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
--- Function to find all parts named "Snow" in the workspace
+-- Store original positions of snow parts
+local originalPositions = {}
+
+-- Function to find all parts named "Snow1" in the workspace
 local function getSnowParts()
     local parts = {}
     for _, part in ipairs(workspace:GetDescendants()) do
@@ -21,6 +24,11 @@ local function bringAllSnowToFeet(snowParts)
             for _, snowPart in ipairs(snowParts) do
                 -- Ensure the part still exists before teleporting
                 if snowPart and snowPart:IsDescendantOf(workspace) then
+                    -- Store the original position if it's not already stored
+                    if not originalPositions[snowPart] then
+                        originalPositions[snowPart] = snowPart.Position
+                    end
+                    -- Move the snow part to the player's feet
                     snowPart.CFrame = rootPart.CFrame * CFrame.new(0, -rootPart.Size.Y / 2 - snowPart.Size.Y / 2, 0)
                 end
             end
@@ -28,13 +36,31 @@ local function bringAllSnowToFeet(snowParts)
     end
 end
 
+-- Function to restore the original positions of the snow parts
+local function restoreSnowPositions(snowParts)
+    for _, snowPart in ipairs(snowParts) do
+        if originalPositions[snowPart] then
+            -- Move the snow part back to its original position
+            snowPart.CFrame = CFrame.new(originalPositions[snowPart])
+        end
+    end
+end
+
+-- Counter to track how many times the snow has been brought to the feet
+local teleportCount = 0
+
 -- Loop to teleport snow parts repeatedly with a delay
-while true do
+while teleportCount < 10 do
     local snowParts = getSnowParts() -- Refresh the list of Snow1 parts
     if #snowParts > 0 then
         bringAllSnowToFeet(snowParts)
+        teleportCount = teleportCount + 1 -- Increment the counter each time snow is moved
     else
-        warn("No parts named 'Snow' found in the workspace!")
+        warn("No parts named 'Snow1' found in the workspace!")
     end
     task.wait(2) -- Wait for 2 seconds before repeating
 end
+
+-- After 10 times, restore the snow parts to their original positions
+local snowParts = getSnowParts()
+restoreSnowPositions(snowParts)
