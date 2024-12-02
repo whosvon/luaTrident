@@ -1,0 +1,47 @@
+-- Wait for the player's character to load
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- Function to find all parts named "Gems" inside the "Gems" folder
+local function getGemsParts()
+    local gemsParts = {}
+    local gemsFolder = workspace:WaitForChild("Gems") -- Get the first Gems folder
+    local innerGemsFolder = gemsFolder:WaitForChild("Gems") -- Get the inner Gems folder
+
+    for _, part in ipairs(innerGemsFolder:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name == "Gems" then
+            table.insert(gemsParts, part)
+        end
+    end
+    return gemsParts
+end
+
+-- Function to bring all Gems parts to the player's feet at once
+local function bringGemsToFeet(gemsParts)
+    if character then
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        if rootPart then
+            -- Calculate the new position once for all Gems parts
+            local newCFrame = rootPart.CFrame * CFrame.new(0, -rootPart.Size.Y / 2 - 1, 0) -- Adjust Y offset to make it appear at the feet
+            
+            -- Teleport all Gems parts to the same position at once
+            for _, gemPart in ipairs(gemsParts) do
+                -- Ensure the part still exists before teleporting
+                if gemPart and gemPart:IsDescendantOf(workspace) then
+                    gemPart.CFrame = newCFrame
+                end
+            end
+        end
+    end
+end
+
+-- Loop to teleport Gems parts at once every 2 seconds
+while true do
+    local gemsParts = getGemsParts() -- Refresh the list of Gems parts
+    if #gemsParts > 0 then
+        bringGemsToFeet(gemsParts) -- Teleport all Gems parts to the player's feet at once
+    else
+        warn("No parts named 'Gems' found in the workspace!")
+    end
+    task.wait(2) -- Wait for 2 seconds before repeating
+end
