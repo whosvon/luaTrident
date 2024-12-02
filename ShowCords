@@ -1,0 +1,30 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Create ScreenGui and TextLabel
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CoordinatesGui"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local coordinatesLabel = Instance.new("TextLabel")
+coordinatesLabel.Name = "CoordinatesLabel"
+coordinatesLabel.Size = UDim2.new(0, 300, 0, 50)  -- Adjust size
+coordinatesLabel.Position = UDim2.new(0, 10, 0, 10)  -- Position on screen (top left)
+coordinatesLabel.BackgroundTransparency = 0.5
+coordinatesLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Black background
+coordinatesLabel.TextColor3 = Color3.fromRGB(255, 255, 255)  -- White text
+coordinatesLabel.TextSize = 20
+coordinatesLabel.Text = "X: 0, Y: 0, Z: 0"
+coordinatesLabel.Parent = screenGui
+
+-- Function to update the coordinates on the TextLabel
+local function updateCoordinates()
+    local position = humanoidRootPart.Position
+    local x, y, z = position.X, position.Y, position.Z
+    coordinatesLabel.Text = string.format("X: %.2f, Y: %.2f, Z: %.2f", x, y, z)
+end
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    updateCoordinates()
+end)
