@@ -45,8 +45,15 @@ local function teleportPlayer(targetPosition)
     end
 end
 
-local EggTP1 = EggTab:CreateButton({
-    Name = "Teleport To RainbowPets!",
+local GoldEgg = EggTab:CreateButton({
+    Name = "Teleport To Gold Pets!",
+    Callback = function()
+        teleportPlayer(Vector3.new(6.99, 22.95, -1144.52))
+    end,
+})
+
+local RainbowEgg = EggTab:CreateButton({
+    Name = "Teleport To Rainbow Pets!",
     Callback = function()
         teleportPlayer(Vector3.new(7.43, 5.05, -3070.08))
     end,
