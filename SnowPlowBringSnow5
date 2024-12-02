@@ -1,1 +1,40 @@
+-- Wait for the player's character to load
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
 
+-- Function to find all parts named "Snow" in the workspace
+local function getSnowParts()
+    local parts = {}
+    for _, part in ipairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") and part.Name == "Snow5" then
+            table.insert(parts, part)
+        end
+    end
+    return parts
+end
+
+-- Function to bring all Snow1 parts to the player's feet
+local function bringAllSnowToFeet(snowParts)
+    if character then
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        if rootPart then
+            for _, snowPart in ipairs(snowParts) do
+                -- Ensure the part still exists before teleporting
+                if snowPart and snowPart:IsDescendantOf(workspace) then
+                    snowPart.CFrame = rootPart.CFrame * CFrame.new(0, -rootPart.Size.Y / 2 - snowPart.Size.Y / 2, 0)
+                end
+            end
+        end
+    end
+end
+
+-- Loop to teleport snow parts repeatedly with a delay
+while true do
+    local snowParts = getSnowParts() -- Refresh the list of Snow1 parts
+    if #snowParts > 0 then
+        bringAllSnowToFeet(snowParts)
+    else
+        warn("No parts named 'Snow' found in the workspace!")
+    end
+    task.wait(2) -- Wait for 2 seconds before repeating
+end
