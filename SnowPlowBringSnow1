@@ -1,19 +1,15 @@
--- Wait for the player's character to load
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
--- Table to store original positions of Snow1 parts
 local originalPositions = {}
 local isSnowBeingBrought = false
 local snowLoop
 
--- Function to find all parts named "Snow1" in the workspace
 local function getSnowParts()
     local parts = {}
     for _, part in ipairs(workspace:GetDescendants()) do
         if part:IsA("BasePart") and part.Name == "Snow1" then
             table.insert(parts, part)
-            -- Store original positions if not already stored
             if not originalPositions[part] then
                 originalPositions[part] = part.CFrame
             end
@@ -22,7 +18,6 @@ local function getSnowParts()
     return parts
 end
 
--- Function to bring all Snow1 parts to the player's feet
 local function bringAllSnowToFeet(snowParts)
     if character then
         local rootPart = character:FindFirstChild("HumanoidRootPart")
@@ -36,7 +31,6 @@ local function bringAllSnowToFeet(snowParts)
     end
 end
 
--- Function to reset Snow1 parts to their original positions
 local function resetSnowParts()
     for snowPart, originalCFrame in pairs(originalPositions) do
         if snowPart and snowPart:IsDescendantOf(workspace) then
@@ -45,10 +39,8 @@ local function resetSnowParts()
     end
 end
 
--- Start or stop the snow loop based on the toggle value
 local function toggleSnowBehavior(isEnabled)
     if isEnabled then
-        -- Start bringing snow to the player's feet
         isSnowBeingBrought = true
         snowLoop = coroutine.create(function()
             while isSnowBeingBrought do
@@ -63,7 +55,6 @@ local function toggleSnowBehavior(isEnabled)
         end)
         coroutine.resume(snowLoop)
     else
-        -- Stop the loop and reset snow
         isSnowBeingBrought = false
         resetSnowParts()
     end
