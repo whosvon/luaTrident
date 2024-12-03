@@ -50,7 +50,7 @@ end
 local teleportCount = 0
 
 -- Loop to teleport snow parts repeatedly with a delay
-while teleportCount < 10 do
+while teleportCount < 5000 do
     local snowParts = getSnowParts() -- Refresh the list of Snow1 parts
     if #snowParts > 0 then
         bringAllSnowToFeet(snowParts)
@@ -58,7 +58,7 @@ while teleportCount < 10 do
     else
         warn("No parts named 'Snow1' found in the workspace!")
     end
-    task.wait(2) -- Wait for 2 seconds before repeating
+    task.wait(1) -- Wait for 2 seconds before repeating
 end
 
 -- After 10 times, restore the snow parts to their original positions
