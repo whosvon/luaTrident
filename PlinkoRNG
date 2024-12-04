@@ -36,7 +36,7 @@ local CredsTab = Window:CreateTab("Credits", 4483362458)
 local MainTab = CredsTab:CreateButton({
     Name = "Always 100x",
     Callback = function()
-        print("Poppintums/Whosvon")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/Always100x"))()
     end,
 })
 
