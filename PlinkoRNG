@@ -1,45 +1,51 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "PlinkoRNG",
-   Icon = 0,
-   LoadingTitle = "Enjoy!",
-   LoadingSubtitle = "by PoppinTums",
-   Theme = "Amethyst",
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "config"
-   },
-   Discord = {
-      Enabled = true,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = true,
-   KeySettings = {
-      Title = "PlinkoRNG",
-      Subtitle = "Have Fun!",
-      Note = "Key is Hello",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = false,
-      Key = {"Hello"}
-   }
+    Name = "PlinkoRNG",
+    Icon = 0,
+    LoadingTitle = "Enjoy!",
+    LoadingSubtitle = "by PoppinTums",
+    Theme = "Amethyst",
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false,
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "config"
+    },
+    Discord = {
+        Enabled = true,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = true,
+    KeySettings = {
+        Title = "PlinkoRNG",
+        Subtitle = "Have Fun!",
+        Note = "Key is Hello",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"Hello"}
+    }
 })
 
+-- Main tab
 local MainTab = Window:CreateTab("Main", 4483362458)
+-- Credits tab
 local CredsTab = Window:CreateTab("Credits", 4483362458)
+-- Misc tab for speed controls (created now)
+local MiscTab = Window:CreateTab("Misc", 4483362458)
 
-local MainTab = CredsTab:CreateButton({
+-- Always 100x button
+local Always100x = MainTab:CreateButton({
     Name = "Always 100x",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/Always100x"))()
     end,
 })
 
+-- Credits buttons
 local CreditsName = CredsTab:CreateButton({
     Name = "Poppintums/Whosvon",
     Callback = function()
@@ -54,13 +60,13 @@ local CreditsDiscord = CredsTab:CreateButton({
     end,
 })
 
+-- Speed change buttons
 local Speed25 = MiscTab:CreateButton({
     Name = "Change Speed - 25",
     Callback = function()
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 25
     end,
 })
@@ -71,7 +77,6 @@ local Speed50 = MiscTab:CreateButton({
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 50
     end,
 })
@@ -82,60 +87,31 @@ local SpeedReset = MiscTab:CreateButton({
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 18
     end,
 })
 
-local Toggle -- Declare the toggle variable globally for easy access later
+-- Toggle to start/stop Auto Drop
+local isRunning = false
 
--- Define the button-click simulation function
-local function simulateButtonClick()
-    -- Get the Player's PlayerGui
-    local player = game.Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-
-    -- Find MainUI and DropButton
-    local mainUI = playerGui:WaitForChild("MainUI")
-    local dropButton = mainUI:WaitForChild("DropButton")
-
-    -- Adjust the size of DropButton (like in your example)
-    dropButton.Size = UDim2.new(1001, 0, 1001, 0)
-
-    -- Use VirtualUser to simulate the button press and release
-    local virtualUser = game:GetService("VirtualUser")
-
-    -- Start a loop to spam the button with randomized delays
-    while Toggle and Toggle:Get() do  -- Check if toggle is still enabled
-        -- Get the center position of the DropButton to simulate the click at the button's center
-        local buttonPosition = dropButton.AbsolutePosition
-        local buttonSize = dropButton.Size
-        local buttonCenter = buttonPosition + (buttonSize / 2)
-
-        -- Simulate Button1Down (press)
-        virtualUser:Button1Down(buttonCenter)  -- Simulate press at the button's center
-        
-        -- Simulate Button1Up (release)
-        virtualUser:Button1Up(buttonCenter)    -- Simulate release at the button's center
-
-        -- Randomized wait time (between 0.5 and 1.5 seconds) to simulate human-like behavior
-        local randomWaitTime = math.random(50, 150) / 100  -- Random wait between 0.5 to 1.5 seconds
-        wait(randomWaitTime)  -- Adjust the wait time to simulate realistic button pressing speed
-    end
-end
-
--- Create the toggle and handle its state
-Toggle1 = MainTab:CreateToggle({
-   Name = "Auto Drop",
-   CurrentValue = false,  -- Start with the toggle off
-   Flag = "Toggle1",  -- The flag for saving the toggle's state
-   Callback = function(Value)
-       if Value then
-           -- When toggle is ON, start executing the button click script
-           simulateButtonClick()
-       else
-           -- When toggle is OFF, we can simply do nothing or clean up if needed
-           -- In this case, the while loop in simulateButtonClick will exit if toggle is off
-       end
-   end,
+local Toggle1 = MainTab:CreateToggle({
+    Name = "Auto Drop",
+    CurrentValue = false,
+    Flag = "Toggle1",  -- The flag for saving the toggle's state
+    Callback = function(Value)
+        if Value then
+            -- When toggle is ON, start executing the button click script
+            isRunning = true
+            -- Use spawn to run the loop in a separate thread so the toggle remains responsive
+            spawn(function()
+                while isRunning do
+                    loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/AutoDrop"))()
+                    wait(0.1)  -- Adjust the wait time as needed, to control how often it executes
+                end
+            end)
+        else
+            -- When toggle is OFF, stop the loop by changing the flag
+            isRunning = false
+        end
+    end,
 })
