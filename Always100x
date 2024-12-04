@@ -1,1 +1,42 @@
+local ballsFolder = workspace:FindFirstChild("Balls")
+local slotsFolder = workspace:FindFirstChild("Slots")
 
+if not ballsFolder then
+    warn("Folder named 'Balls' not found in the workspace!")
+    return
+end
+
+if not slotsFolder then
+    warn("Folder named 'Slots' not found in the workspace!")
+    return
+end
+
+local part100 = slotsFolder:FindFirstChild("100")
+
+if not part100 then
+    warn("Part named '100' not found inside the Slots folder!")
+    return
+end
+
+local function moveBallToPart(ball)
+    if ball:IsA("BasePart") and ball.Name == "Ball" then
+        ball.CFrame = part100.CFrame
+        print("Teleported Ball to Part 100.")
+    end
+end
+
+local function processExistingBalls()
+    for _, ball in ipairs(ballsFolder:GetChildren()) do
+        moveBallToPart(ball)
+    end
+end
+
+ballsFolder.ChildAdded:Connect(function(child)
+    moveBallToPart(child)
+end)
+
+processExistingBalls()
+
+while true do
+    task.wait(1)
+end
