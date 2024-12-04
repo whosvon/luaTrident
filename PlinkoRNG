@@ -1,0 +1,88 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "PlinkoRNG",
+   Icon = 0,
+   LoadingTitle = "Enjoy!",
+   LoadingSubtitle = "by PoppinTums",
+   Theme = "Amethyst",
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "config"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = true,
+   KeySettings = {
+      Title = "PlinkoRNG",
+      Subtitle = "Have Fun!",
+      Note = "Key is Hello",
+      FileName = "Key",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"Hello"}
+   }
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+local CredsTab = Window:CreateTab("Credits", 4483362458)
+
+local MainTab = CredsTab:CreateButton({
+    Name = "Always 100x",
+    Callback = function()
+        print("Poppintums/Whosvon")
+    end,
+})
+
+local CreditsName = CredsTab:CreateButton({
+    Name = "Poppintums/Whosvon",
+    Callback = function()
+        print("Poppintums/Whosvon")
+    end,
+})
+
+local CreditsDiscord = CredsTab:CreateButton({
+    Name = "Discord - Click To Copy",
+    Callback = function()
+        setclipboard("https://discord.gg/3vE3JTpbdX")
+    end,
+})
+
+local Speed25 = MiscTab:CreateButton({
+    Name = "Change Speed - 25",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 25
+    end,
+})
+
+local Speed50 = MiscTab:CreateButton({
+    Name = "Change Speed - 50",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 50
+    end,
+})
+
+local SpeedReset = MiscTab:CreateButton({
+    Name = "Reset/Change Speed - 18",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 18
+    end,
+})
