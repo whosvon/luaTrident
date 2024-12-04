@@ -1,0 +1,23 @@
+-- Simulate button click for DropButton in MainUI using your provided method
+local function simulateButtonClick()
+    -- Get the Player's PlayerGui
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Find MainUI and DropButton
+    local mainUI = playerGui:WaitForChild("MainUI")
+    local dropButton = mainUI:WaitForChild("DropButton")
+
+    -- Adjust the size of DropButton (like in your example)
+    dropButton.Size = UDim2.new(1001, 0, 1001, 0)
+
+    -- Use VirtualUser to simulate the button press and release
+    local virtualUser = game:GetService("VirtualUser")
+    
+    -- Simulate Button1Down and Button1Up at a point (using arbitrary screen position for now)
+    virtualUser:Button1Down(Vector2.new(1, 1))  -- Simulate press at screen position (1,1) for now
+    virtualUser:Button1Up(Vector2.new(1, 1))    -- Simulate release at screen position (1,1)
+end
+
+-- Call the function to simulate the button click
+simulateButtonClick()
