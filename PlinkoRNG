@@ -86,3 +86,56 @@ local SpeedReset = MiscTab:CreateButton({
         humanoid.WalkSpeed = 18
     end,
 })
+
+local Toggle -- Declare the toggle variable globally for easy access later
+
+-- Define the button-click simulation function
+local function simulateButtonClick()
+    -- Get the Player's PlayerGui
+    local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Find MainUI and DropButton
+    local mainUI = playerGui:WaitForChild("MainUI")
+    local dropButton = mainUI:WaitForChild("DropButton")
+
+    -- Adjust the size of DropButton (like in your example)
+    dropButton.Size = UDim2.new(1001, 0, 1001, 0)
+
+    -- Use VirtualUser to simulate the button press and release
+    local virtualUser = game:GetService("VirtualUser")
+
+    -- Start a loop to spam the button with randomized delays
+    while Toggle and Toggle:Get() do  -- Check if toggle is still enabled
+        -- Get the center position of the DropButton to simulate the click at the button's center
+        local buttonPosition = dropButton.AbsolutePosition
+        local buttonSize = dropButton.Size
+        local buttonCenter = buttonPosition + (buttonSize / 2)
+
+        -- Simulate Button1Down (press)
+        virtualUser:Button1Down(buttonCenter)  -- Simulate press at the button's center
+        
+        -- Simulate Button1Up (release)
+        virtualUser:Button1Up(buttonCenter)    -- Simulate release at the button's center
+
+        -- Randomized wait time (between 0.5 and 1.5 seconds) to simulate human-like behavior
+        local randomWaitTime = math.random(50, 150) / 100  -- Random wait between 0.5 to 1.5 seconds
+        wait(randomWaitTime)  -- Adjust the wait time to simulate realistic button pressing speed
+    end
+end
+
+-- Create the toggle and handle its state
+Toggle1 = MainTab:CreateToggle({
+   Name = "Auto Drop",
+   CurrentValue = false,  -- Start with the toggle off
+   Flag = "Toggle1",  -- The flag for saving the toggle's state
+   Callback = function(Value)
+       if Value then
+           -- When toggle is ON, start executing the button click script
+           simulateButtonClick()
+       else
+           -- When toggle is OFF, we can simply do nothing or clean up if needed
+           -- In this case, the while loop in simulateButtonClick will exit if toggle is off
+       end
+   end,
+})
