@@ -1,1 +1,184 @@
+-- Settings
+local settings = {
+    enabled = true,        -- Enable or disable ESP
+    skeletonColor = Color3.new(1, 0, 0), -- Color for skeletons (red)
+    textColor = Color3.new(1, 1, 1),     -- Color for usernames (white)
+    textSize = 14,                       -- Font size for usernames
+    updateInterval = 0.1,  -- How often to update the ESP (in seconds)
+}
 
+-- Store ESP objects
+local espObjects = {}
+
+-- Skeleton parts to track
+local skeletonParts = {
+    "Head", "UpperTorso", "LowerTorso", "LeftUpperArm", "LeftLowerArm", "RightUpperArm", "RightLowerArm",
+    "LeftUpperLeg", "LeftLowerLeg", "RightUpperLeg", "RightLowerLeg"
+}
+
+-- Create ESP for a specific character
+local function createESP(character)
+    if not character:FindFirstChild("HumanoidRootPart") then return end
+    if not character:FindFirstChild("Humanoid") then return end
+
+    -- Cache the skeleton lines
+    local skeletonLines = {}
+
+    -- Skeleton ESP
+    local function drawSkeleton()
+        for _, partName in pairs(skeletonParts) do
+            local part = character:FindFirstChild(partName)
+            if part then
+                local line = Drawing.new("Line")
+                line.Thickness = 2
+                line.Color = settings.skeletonColor
+                line.Transparency = 1
+                line.Visible = settings.enabled
+                table.insert(skeletonLines, line)
+            end
+        end
+
+        -- Update skeleton positions periodically
+        game:GetService("RunService").Heartbeat:Connect(function()
+            if settings.enabled then
+                for i, partName in pairs(skeletonParts) do
+                    local part = character:FindFirstChild(partName)
+                    if part then
+                        local partPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+                        local rootPos = workspace.CurrentCamera:WorldToViewportPoint(character.HumanoidRootPart.Position)
+                        
+                        if onScreen then
+                            skeletonLines[i].From = Vector2.new(rootPos.X, rootPos.Y)
+                            skeletonLines[i].To = Vector2.new(partPos.X, partPos.Y)
+                            skeletonLines[i].Visible = settings.enabled
+                        else
+                            skeletonLines[i].Visible = false
+                        end
+                    else
+                        skeletonLines[i]:Remove()
+                        table.remove(skeletonLines, i)
+                    end
+                end
+            else
+                for _, line in pairs(skeletonLines) do
+                    line.Visible = false
+                end
+            end
+        end)
+    end
+
+    -- Draw skeleton
+    drawSkeleton()
+
+    -- Username ESP
+    local billboardGui = Instance.new("BillboardGui")
+    billboardGui.Adornee = character:FindFirstChild("HumanoidRootPart")
+    billboardGui.Size = UDim2.new(2, 0, 2, 0)
+    billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+    billboardGui.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel", billboardGui)
+    textLabel.Text = character.Name
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.TextColor3 = settings.textColor
+    textLabel.TextSize = settings.textSize
+    textLabel.Font = Enum.Font.SourceSansBold
+
+    -- Add the GUI to the player
+    billboardGui.Parent = game.CoreGui
+
+    -- Store the ESP object
+    espObjects[character] = {
+        skeletonLines = skeletonLines,
+        billboardGui = billboardGui
+    }
+end
+
+-- Remove ESP for a specific character
+local function removeESP(character)
+    if espObjects[character] then
+        -- Remove skeleton lines
+        for _, line in pairs(espObjects[character].skeletonLines) do
+            line:Remove()
+        end
+
+        -- Remove BillboardGui
+        if espObjects[character].billboardGui then
+            espObjects[character].billboardGui:Destroy()
+        end
+
+        -- Cleanup the espObjects table
+        espObjects[character] = nil
+    end
+end
+
+-- Function to toggle ESP on and off when "P" is pressed
+local function toggleESP()
+    settings.enabled = not settings.enabled
+
+    -- Enable/Disable ESP for all players
+    if settings.enabled then
+        applyESPToAllPlayers()
+    else
+        for _, player in pairs(game.Players:GetPlayers()) do
+            removeESP(player.Character)
+        end
+    end
+end
+
+-- Bind the toggle to the "P" key
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.P then
+        toggleESP()
+    end
+end)
+
+-- Apply ESP to all players in the game
+local function applyESPToAllPlayers()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character then
+            createESP(player.Character)
+        end
+
+        -- Reapply ESP when a player respawns
+        player.CharacterAdded:Connect(function(character)
+            if settings.enabled then
+                createESP(character)
+            end
+        end)
+    end
+
+    -- Track new players joining
+    game.Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function(character)
+            if settings.enabled then
+                createESP(character)
+            end
+        end)
+    end)
+end
+
+-- Continuous ESP updater
+local function updateESP()
+    while true do
+        wait(settings.updateInterval)
+
+        -- Constantly update ESP for all players, reapply if needed
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character and not espObjects[player.Character] then
+                createESP(player.Character) -- Ensure ESP is created
+            elseif not player.Character and espObjects[player.Character] then
+                removeESP(player.Character) -- Remove ESP if the player died
+            end
+        end
+    end
+end
+
+-- Start the continuous update
+spawn(updateESP)
+
+-- Run the ESP script initially if enabled
+if settings.enabled then
+    applyESPToAllPlayers()
+end
