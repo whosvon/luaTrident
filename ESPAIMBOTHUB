@@ -1,7 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "PlinkoRNG",
+    Name = "ESP-AIMBOT",
     Icon = 0,
     LoadingTitle = "Enjoy!",
     LoadingSubtitle = "by PoppinTums",
@@ -20,7 +20,7 @@ local Window = Rayfield:CreateWindow({
     },
     KeySystem = true,
     KeySettings = {
-        Title = "PlinkoRNG",
+        Title = "ESP-AIMBOT",
         Subtitle = "Have Fun!",
         Note = "Key is Hello",
         FileName = "Key",
