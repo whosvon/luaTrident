@@ -81,10 +81,76 @@ local CreditsDiscord = CredsTab:CreateButton({
     end,
 })
 
+-- Text Size Slider
+local TextSizeSlider = MainTab:CreateSlider({
+    Name = "Text Size",
+    Range = {10, 40},  -- Set the range of the text size slider
+    Increment = 1,     -- Set the increment step to 1
+    Suffix = "Size",   -- Label suffix for the slider
+    CurrentValue = textSize,
+    Flag = "TextSizeSlider",  -- Flag for saving the slider's value
+    Callback = function(Value)
+        textSize = Value  -- Update textSize with the slider value
+        -- Optionally, apply this to the ESP elements if needed
+        -- For example, update the ESP text labels if the ESP is already created
+    end,
+})
+
+-- Color Picker for Text Color
+local ColorPicker = MainTab:CreateColorPicker({
+    Name = "Text Color",
+    Color = textColor,  -- Set default color to white
+    Flag = "TextColorPicker",  -- Flag for saving the color value
+    Callback = function(Value)
+        textColor = Value  -- Update textColor with the color picked
+        -- Optionally, apply this to the ESP elements if needed
+        -- For example, update the ESP text labels with the new color
+    end,
+})
+
+-- ESP Button
 local ESP = MainTab:CreateButton({
     Name = "ESP-Names",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/main/ESP"))()
+
+        -- Assuming you are adding text labels to the ESP
+        local function createESPLabel(player)
+            -- Create BillboardGui for the player
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Adornee = humanoidRootPart
+            billboardGui.Size = UDim2.new(2, 0, 2, 0)
+            billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+            billboardGui.AlwaysOnTop = true
+
+            -- Create the TextLabel for ESP
+            local textLabel = Instance.new("TextLabel", billboardGui)
+            textLabel.Text = player.Name
+            textLabel.Size = UDim2.new(1, 0, 1, 0)
+            textLabel.BackgroundTransparency = 1
+            textLabel.TextColor3 = textColor  -- Use dynamic text color
+            textLabel.TextSize = textSize    -- Use dynamic text size
+            textLabel.Font = Enum.Font.SourceSansBold
+
+            -- Add the GUI to the player's character
+            billboardGui.Parent = game.CoreGui
+        end
+
+        -- Update ESP for existing players
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character then
+                createESPLabel(player)
+            end
+        end
+
+        -- Listen for new players joining the game
+        game.Players.PlayerAdded:Connect(function(player)
+            player.CharacterAdded:Connect(function()
+                createESPLabel(player)
+            end)
+        end)
     end,
 })
 
