@@ -30,12 +30,23 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Main tab
 local MainTab = Window:CreateTab("Main", 4483362458)
--- Credits tab
-local CredsTab = Window:CreateTab("Credits", 4483362458)
--- Misc tab for speed controls (created now)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
+local CredsTab = Window:CreateTab("Credits", 4483362458)
+
+local Creds = CredsTab:CreateButton({
+   Name = "Whosvon/PoppinTums",
+   Callback = function()
+   print("Da King Is Has Arrived")
+   end,
+})
+
+local CreditsDiscord = CredsTab:CreateButton({
+    Name = "Discord - Click To Copy",
+    Callback = function()
+        setclipboard("https://discord.gg/3vE3JTpbdX")
+    end,
+})
 
 -- Aimbot Settings
 local aimbotEnabled = false
