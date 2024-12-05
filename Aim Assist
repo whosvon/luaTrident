@@ -1,0 +1,82 @@
+-- Settings
+local settings = {
+    fovRadius = 100,
+    aimbotEnabled = true,
+    smoothness = 0.05,
+    predictionFactor = 0.25
+}
+
+-- Aimbot Lock On Target
+local function lockOnHead()
+    local camera = workspace.CurrentCamera
+    local mousePos = game:GetService("UserInputService"):GetMouseLocation()
+    local closestTarget = nil
+    local closestDist = math.huge
+
+    -- Loop through all players to find the closest target within the FOV
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player ~= game.Players.LocalPlayer then
+            local head = player.Character:FindFirstChild("Head")
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if head and humanoid then
+                local screenPos, onScreen = camera:WorldToViewportPoint(head.Position)
+                local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+
+                -- Check if the target is within FOV and closer than the previous target
+                if onScreen and dist < settings.fovRadius and dist < closestDist then
+                    closestTarget = player
+                    closestDist = dist
+                end
+            end
+        end
+    end
+
+    -- Lock onto the closest target's head
+    if closestTarget then
+        local headPos = closestTarget.Character:FindFirstChild("Head").Position
+        local humanoidRootPart = closestTarget.Character:FindFirstChild("HumanoidRootPart")
+        local humanoid = closestTarget.Character:FindFirstChild("Humanoid")
+
+        if humanoidRootPart and humanoid then
+            -- Calculate player's velocity (movement)
+            local velocity = humanoidRootPart.Velocity
+
+            -- Predict future position based on velocity
+            local predictedHeadPos = headPos + velocity * settings.predictionFactor
+
+            local cameraPos = camera.CFrame.Position
+            
+            -- Calculate direction from camera to predicted target head position
+            local direction = (predictedHeadPos - cameraPos).unit
+            
+            -- Use CFrame to directly aim at the predicted position
+            local targetCFrame = CFrame.new(cameraPos, predictedHeadPos)
+            
+            -- Apply smoothing (smooth transition, but for faster lock-on)
+            local smoothedCFrame = camera.CFrame:Lerp(targetCFrame, settings.smoothness)
+            
+            -- Set the camera's CFrame to aim towards the target's head
+            workspace.CurrentCamera.CFrame = smoothedCFrame
+        end
+    end
+end
+
+-- Handle right-click to lock onto the head
+local isRightClicking = false
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click pressed
+        isRightClicking = true
+        while isRightClicking do
+            if settings.aimbotEnabled then
+                lockOnHead() -- Keep locking onto the head while right-clicking
+            end
+            wait(0.05) -- Adjust the speed of locking (smaller value is faster)
+        end
+    end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click released
+        isRightClicking = false
+    end
+end)
