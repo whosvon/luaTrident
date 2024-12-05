@@ -1,0 +1,168 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "PlinkoRNG",
+    Icon = 0,
+    LoadingTitle = "Enjoy!",
+    LoadingSubtitle = "by PoppinTums",
+    Theme = "Amethyst",
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false,
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil,
+        FileName = "config"
+    },
+    Discord = {
+        Enabled = true,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = true,
+    KeySettings = {
+        Title = "PlinkoRNG",
+        Subtitle = "Have Fun!",
+        Note = "Key is Hello",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"Hello"}
+    }
+})
+
+-- Main tab
+local MainTab = Window:CreateTab("Main", 4483362458)
+-- Credits tab
+local CredsTab = Window:CreateTab("Credits", 4483362458)
+-- Misc tab for speed controls (created now)
+local MiscTab = Window:CreateTab("Misc", 4483362458)
+
+-- Aimbot Settings
+local aimbotEnabled = false
+local fovRadius = 100
+local smoothness = 0.05
+
+-- Aimbot Toggle
+local ToggleAimbot = MainTab:CreateToggle({
+    Name = "Enable Aimbot",
+    CurrentValue = aimbotEnabled,
+    Flag = "AimbotToggle", -- Flag for saving the toggle's state
+    Callback = function(Value)
+        aimbotEnabled = Value
+    end,
+})
+
+-- FOV Slider
+local FovSlider = MainTab:CreateSlider({
+    Name = "FOV Radius",
+    Range = {10, 500},
+    Increment = 10,
+    Suffix = "Units",
+    CurrentValue = fovRadius,
+    Flag = "FovSlider", -- Flag for saving the slider's value
+    Callback = function(Value)
+        fovRadius = Value
+    end,
+})
+
+-- Smoothness Slider
+local SmoothnessSlider = MainTab:CreateSlider({
+    Name = "Aimbot Smoothness",
+    Range = {0.01, 1},
+    Increment = 0.01,
+    Suffix = "Speed",
+    CurrentValue = smoothness,
+    Flag = "SmoothnessSlider", -- Flag for saving the slider's value
+    Callback = function(Value)
+        smoothness = Value
+    end,
+})
+
+-- Main Code for Aimbot and FOV Logic
+local function lockOnHead()
+    local camera = workspace.CurrentCamera
+    local mousePos = game:GetService("UserInputService"):GetMouseLocation()
+    local closestTarget = nil
+    local closestDist = math.huge
+
+    -- Loop through all players to find the closest target within the FOV
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player ~= game.Players.LocalPlayer then
+            local head = player.Character:FindFirstChild("Head")
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if head and humanoid then
+                local screenPos, onScreen = camera:WorldToViewportPoint(head.Position)
+                local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+
+                -- Check if the target is within FOV and visible
+                if onScreen and dist < fovRadius and dist < closestDist and isVisible(player) then
+                    closestTarget = player
+                    closestDist = dist
+                end
+            end
+        end
+    end
+
+    -- Lock onto the closest target's head
+    if closestTarget then
+        local headPos = closestTarget.Character:FindFirstChild("Head").Position
+        local humanoidRootPart = closestTarget.Character:FindFirstChild("HumanoidRootPart")
+        local humanoid = closestTarget.Character:FindFirstChild("Humanoid")
+
+        if humanoidRootPart and humanoid then
+            -- Calculate player's velocity (movement)
+            local velocity = humanoidRootPart.Velocity
+
+            -- Predict future position based on velocity
+            local predictedHeadPos = headPos + velocity * 0.25 -- Adjust prediction factor if needed
+
+            local cameraPos = camera.CFrame.Position
+            local direction = (predictedHeadPos - cameraPos).unit
+
+            -- Calculate the smooth transition
+            local targetCFrame = CFrame.new(cameraPos, predictedHeadPos)
+            local smoothedCFrame = camera.CFrame:Lerp(targetCFrame, smoothness)
+            
+            -- Aim at the predicted target's head
+            workspace.CurrentCamera.CFrame = smoothedCFrame
+        end
+    end
+end
+
+-- Handle right-click to lock onto the head
+local isRightClicking = false
+game:GetService("UserInputService").InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click pressed
+        isRightClicking = true
+        while isRightClicking do
+            if aimbotEnabled then
+                lockOnHead() -- Keep locking onto the head while right-clicking
+            end
+            wait(0.05) -- Adjust the speed of locking (smaller value is faster)
+        end
+    end
+end)
+
+game:GetService("UserInputService").InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click released
+        isRightClicking = false
+    end
+end)
+
+-- Helper Function to check if the target is visible
+local function isVisible(target)
+    local camera = workspace.CurrentCamera
+    local head = target.Character:FindFirstChild("Head")
+    if not head then return false end
+
+    -- Perform a raycast from the camera to the target's head
+    local rayOrigin = camera.CFrame.Position
+    local rayDirection = (head.Position - rayOrigin).unit * 1000
+    local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
+
+    -- If the raycast hits something other than the target, the target is not visible
+    if raycastResult and raycastResult.Instance.Parent ~= target.Character then
+        return false
+    end
+    return true
+end
