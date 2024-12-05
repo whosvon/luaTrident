@@ -49,7 +49,7 @@ local TextSizeSlider = MainTab:CreateSlider({
     Callback = function(Value)
         textSize = Value  -- Update textSize with the slider value
 
-        -- Apply updated textSize to ESP labels
+        -- Apply updated textSize to ESP labels immediately
         for _, billboard in pairs(game.CoreGui:GetChildren()) do
             if billboard:IsA("BillboardGui") then
                 for _, label in pairs(billboard:GetChildren()) do
@@ -61,6 +61,7 @@ local TextSizeSlider = MainTab:CreateSlider({
         end
     end,
 })
+
 
 -- Color Picker for Text Color
 local ColorPicker = MainTab:CreateColorPicker({
