@@ -84,7 +84,7 @@ local CreditsDiscord = CredsTab:CreateButton({
 local ESP = MainTab:CreateButton({
     Name = "ESP-Names",
     Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/ESP"))()
+        loadstring(game:HttpGet("https://github.com/whosvon/luaTrident/blob/main/ESP"))()
     end,
 })
 
