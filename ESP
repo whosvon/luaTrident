@@ -1,6 +1,6 @@
 -- Settings
 local settings = {
-    enabled = true,        -- Enable or disable ESP
+    enabled = false,  -- Default state is disabled (can be changed later via toggle)
     skeletonColor = Color3.new(1, 0, 0), -- Color for skeletons (red)
     textColor = Color3.new(1, 1, 1),     -- Color for usernames (white)
     textSize = 14,                       -- Font size for usernames
@@ -113,26 +113,38 @@ local function removeESP(character)
     end
 end
 
--- Function to toggle ESP on and off when "P" is pressed
+-- Toggle ESP on/off
 local function toggleESP()
     settings.enabled = not settings.enabled
 
     -- Enable/Disable ESP for all players
     if settings.enabled then
-        applyESPToAllPlayers()
-    else
+        -- Reapply ESP for all players currently in the game
         for _, player in pairs(game.Players:GetPlayers()) do
-            removeESP(player.Character)
+            if player.Character then
+                createESP(player.Character)
+            end
+        end
+    else
+        -- Remove ESP for all players
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player.Character then
+                removeESP(player.Character)
+            end
         end
     end
 end
 
--- Bind the toggle to the "P" key
-game:GetService("UserInputService").InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.P then
-        toggleESP()
-    end
-end)
+-- Rayfield toggle integration
+local ESPToggle = MainTab:CreateToggle({
+    Name = "ESP-Names",
+    CurrentValue = settings.enabled,  -- Set toggle state based on `settings.enabled`
+    Flag = "ESPToggle",  -- Unique flag for saving state if configuration saving is enabled
+    Callback = function(Value)
+        settings.enabled = Value  -- Update settings based on toggle state
+        toggleESP()  -- Toggle ESP on/off
+    end,
+})
 
 -- Apply ESP to all players in the game
 local function applyESPToAllPlayers()
