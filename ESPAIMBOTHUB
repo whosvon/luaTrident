@@ -34,6 +34,39 @@ local MainTab = Window:CreateTab("Main", 4483362458)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 local CredsTab = Window:CreateTab("Credits", 4483362458)
 
+local Speed25 = MiscTab:CreateButton({
+    Name = "Change Speed - 25",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 25
+    end,
+})
+
+local Speed50 = MiscTab:CreateButton({
+    Name = "Change Speed - 50",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 50
+    end,
+})
+
+local SpeedReset = MiscTab:CreateButton({
+    Name = "Reset/Change Speed - 18",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+
+        humanoid.WalkSpeed = 18
+    end,
+})
+
 local Creds = CredsTab:CreateButton({
    Name = "Whosvon/PoppinTums",
    Callback = function()
@@ -45,6 +78,13 @@ local CreditsDiscord = CredsTab:CreateButton({
     Name = "Discord - Click To Copy",
     Callback = function()
         setclipboard("https://discord.gg/3vE3JTpbdX")
+    end,
+})
+
+local ESP = MainTab:CreateButton({
+    Name = "ESP-Names",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/refs/heads/main/ESP"))()
     end,
 })
 
