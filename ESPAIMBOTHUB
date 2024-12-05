@@ -34,13 +34,62 @@ local MainTab = Window:CreateTab("Main", 4483362458)
 local MiscTab = Window:CreateTab("Misc", 4483362458)
 local CredsTab = Window:CreateTab("Credits", 4483362458)
 
+-- Default values for textSize and textColor
+local textSize = 20
+local textColor = Color3.fromRGB(255, 255, 255)
+
+-- Text Size Slider
+local TextSizeSlider = MainTab:CreateSlider({
+    Name = "Text Size",
+    Range = {10, 40},  -- Set the range of the text size slider
+    Increment = 1,     -- Set the increment step to 1
+    Suffix = "Size",   -- Label suffix for the slider
+    CurrentValue = textSize,
+    Flag = "TextSizeSlider",  -- Flag for saving the slider's value
+    Callback = function(Value)
+        textSize = Value  -- Update textSize with the slider value
+
+        -- Apply updated textSize to ESP labels
+        for _, billboard in pairs(game.CoreGui:GetChildren()) do
+            if billboard:IsA("BillboardGui") then
+                for _, label in pairs(billboard:GetChildren()) do
+                    if label:IsA("TextLabel") then
+                        label.TextSize = textSize  -- Update TextSize of the label
+                    end
+                end
+            end
+        end
+    end,
+})
+
+-- Color Picker for Text Color
+local ColorPicker = MainTab:CreateColorPicker({
+    Name = "Text Color",
+    Color = textColor,  -- Set default color to white
+    Flag = "TextColorPicker",  -- Flag for saving the color value
+    Callback = function(Value)
+        textColor = Value  -- Update textColor with the color picked
+
+        -- Apply updated textColor to ESP labels
+        for _, billboard in pairs(game.CoreGui:GetChildren()) do
+            if billboard:IsA("BillboardGui") then
+                for _, label in pairs(billboard:GetChildren()) do
+                    if label:IsA("TextLabel") then
+                        label.TextColor3 = textColor  -- Update TextColor of the label
+                    end
+                end
+            end
+        end
+    end,
+})
+
+-- Speed Change Buttons
 local Speed25 = MiscTab:CreateButton({
     Name = "Change Speed - 25",
     Callback = function()
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 25
     end,
 })
@@ -51,7 +100,6 @@ local Speed50 = MiscTab:CreateButton({
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 50
     end,
 })
@@ -62,11 +110,11 @@ local SpeedReset = MiscTab:CreateButton({
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-
         humanoid.WalkSpeed = 18
     end,
 })
 
+-- Credits Section
 local Creds = CredsTab:CreateButton({
    Name = "Whosvon/PoppinTums",
    Callback = function()
@@ -81,42 +129,14 @@ local CreditsDiscord = CredsTab:CreateButton({
     end,
 })
 
--- Text Size Slider
-local TextSizeSlider = MainTab:CreateSlider({
-    Name = "Text Size",
-    Range = {10, 40},  -- Set the range of the text size slider
-    Increment = 1,     -- Set the increment step to 1
-    Suffix = "Size",   -- Label suffix for the slider
-    CurrentValue = textSize,
-    Flag = "TextSizeSlider",  -- Flag for saving the slider's value
-    Callback = function(Value)
-        textSize = Value  -- Update textSize with the slider value
-        -- Optionally, apply this to the ESP elements if needed
-        -- For example, update the ESP text labels if the ESP is already created
-    end,
-})
-
--- Color Picker for Text Color
-local ColorPicker = MainTab:CreateColorPicker({
-    Name = "Text Color",
-    Color = textColor,  -- Set default color to white
-    Flag = "TextColorPicker",  -- Flag for saving the color value
-    Callback = function(Value)
-        textColor = Value  -- Update textColor with the color picked
-        -- Optionally, apply this to the ESP elements if needed
-        -- For example, update the ESP text labels with the new color
-    end,
-})
-
 -- ESP Button
 local ESP = MainTab:CreateButton({
     Name = "ESP-Names",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/whosvon/luaTrident/main/ESP"))()
 
-        -- Assuming you are adding text labels to the ESP
+        -- Create ESP Labels for each player
         local function createESPLabel(player)
-            -- Create BillboardGui for the player
             local character = player.Character or player.CharacterAdded:Wait()
             local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
             local billboardGui = Instance.new("BillboardGui")
@@ -125,7 +145,6 @@ local ESP = MainTab:CreateButton({
             billboardGui.StudsOffset = Vector3.new(0, 2, 0)
             billboardGui.AlwaysOnTop = true
 
-            -- Create the TextLabel for ESP
             local textLabel = Instance.new("TextLabel", billboardGui)
             textLabel.Text = player.Name
             textLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -134,18 +153,17 @@ local ESP = MainTab:CreateButton({
             textLabel.TextSize = textSize    -- Use dynamic text size
             textLabel.Font = Enum.Font.SourceSansBold
 
-            -- Add the GUI to the player's character
             billboardGui.Parent = game.CoreGui
         end
 
-        -- Update ESP for existing players
+        -- Create ESP for all players
         for _, player in pairs(game.Players:GetPlayers()) do
             if player.Character then
                 createESPLabel(player)
             end
         end
 
-        -- Listen for new players joining the game
+        -- Listen for new players joining
         game.Players.PlayerAdded:Connect(function(player)
             player.CharacterAdded:Connect(function()
                 createESPLabel(player)
@@ -195,14 +213,13 @@ local SmoothnessSlider = MainTab:CreateSlider({
     end,
 })
 
--- Main Code for Aimbot and FOV Logic
+-- Aimbot Lock-On Functionality
 local function lockOnHead()
     local camera = workspace.CurrentCamera
     local mousePos = game:GetService("UserInputService"):GetMouseLocation()
     local closestTarget = nil
     local closestDist = math.huge
 
-    -- Loop through all players to find the closest target within the FOV
     for _, player in pairs(game.Players:GetPlayers()) do
         if player.Character and player ~= game.Players.LocalPlayer then
             local head = player.Character:FindFirstChild("Head")
@@ -211,7 +228,6 @@ local function lockOnHead()
                 local screenPos, onScreen = camera:WorldToViewportPoint(head.Position)
                 local dist = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
 
-                -- Check if the target is within FOV and visible
                 if onScreen and dist < fovRadius and dist < closestDist and isVisible(player) then
                     closestTarget = player
                     closestDist = dist
@@ -220,66 +236,57 @@ local function lockOnHead()
         end
     end
 
-    -- Lock onto the closest target's head
     if closestTarget then
         local headPos = closestTarget.Character:FindFirstChild("Head").Position
         local humanoidRootPart = closestTarget.Character:FindFirstChild("HumanoidRootPart")
         local humanoid = closestTarget.Character:FindFirstChild("Humanoid")
 
         if humanoidRootPart and humanoid then
-            -- Calculate player's velocity (movement)
             local velocity = humanoidRootPart.Velocity
-
-            -- Predict future position based on velocity
-            local predictedHeadPos = headPos + velocity * 0.25 -- Adjust prediction factor if needed
+            local predictedHeadPos = headPos + velocity * 0.25
 
             local cameraPos = camera.CFrame.Position
             local direction = (predictedHeadPos - cameraPos).unit
 
-            -- Calculate the smooth transition
             local targetCFrame = CFrame.new(cameraPos, predictedHeadPos)
             local smoothedCFrame = camera.CFrame:Lerp(targetCFrame, smoothness)
-            
-            -- Aim at the predicted target's head
+
             workspace.CurrentCamera.CFrame = smoothedCFrame
         end
     end
 end
 
--- Handle right-click to lock onto the head
+-- Right-click to lock on
 local isRightClicking = false
 game:GetService("UserInputService").InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click pressed
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
         isRightClicking = true
         while isRightClicking do
             if aimbotEnabled then
-                lockOnHead() -- Keep locking onto the head while right-clicking
+                lockOnHead()
             end
-            wait(0.05) -- Adjust the speed of locking (smaller value is faster)
+            wait(0.05)
         end
     end
 end)
 
 game:GetService("UserInputService").InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then -- Right-click released
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
         isRightClicking = false
     end
 end)
 
--- Helper Function to check if the target is visible
-local function isVisible(target)
+-- Visibility Check Function
+function isVisible(player)
+    local character = player.Character
+    if not character then return false end
+
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return false end
+
     local camera = workspace.CurrentCamera
-    local head = target.Character:FindFirstChild("Head")
-    if not head then return false end
+    local ray = Ray.new(camera.CFrame.Position, (rootPart.Position - camera.CFrame.Position).unit * 1000)
+    local hitPart, hitPos = workspace:FindPartOnRay(ray, game.Players.LocalPlayer.Character)
 
-    -- Perform a raycast from the camera to the target's head
-    local rayOrigin = camera.CFrame.Position
-    local rayDirection = (head.Position - rayOrigin).unit * 1000
-    local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
-
-    -- If the raycast hits something other than the target, the target is not visible
-    if raycastResult and raycastResult.Instance.Parent ~= target.Character then
-        return false
-    end
-    return true
+    return not hitPart or hitPart.Parent == character
 end
